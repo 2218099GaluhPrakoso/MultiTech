@@ -1,10 +1,21 @@
 import React from "react";
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
+import * as Animatable from "react-native-animatable";
 
 const ListHorizontal = ({ categories, selectedCategory, onSelectCategory }) => {
   return (
-    <View style={styles.wrapper}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollContainer}>
+    <Animatable.View animation="slideInLeft" duration={400} style={styles.wrapper}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContainer}
+      >
         {categories.map((category, index) => (
           <TouchableOpacity
             key={index}
@@ -14,32 +25,36 @@ const ListHorizontal = ({ categories, selectedCategory, onSelectCategory }) => {
             ]}
             onPress={() => onSelectCategory(category)}
           >
-            <Text style={selectedCategory === category ? styles.activeText : styles.text}>
+            <Text
+              style={
+                selectedCategory === category ? styles.activeText : styles.text
+              }
+            >
               {category}
             </Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
-    </View>
+    </Animatable.View>
   );
 };
 
 const styles = StyleSheet.create({
   wrapper: {
-    height: 40, // Pastikan kategori tidak memanjang ke bawah
+    height: 40,
     justifyContent: "center",
   },
   scrollContainer: {
     flexDirection: "row",
-    alignItems: "center", // Menjaga item tetap di tengah secara vertikal
+    alignItems: "center",
   },
   category: {
-    height: 30, // Atur tinggi kategori agar tidak memanjang ke bawah
+    height: 30,
     paddingHorizontal: 10,
     backgroundColor: "#333",
     borderRadius: 15,
     marginRight: 6,
-    justifyContent: "center", // Menjaga teks tetap di tengah
+    justifyContent: "center",
   },
   activeCategory: {
     backgroundColor: "#4A90E2",

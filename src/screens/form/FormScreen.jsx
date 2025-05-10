@@ -1,15 +1,27 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
+import axios from "axios";
 
 const FormScreen = ({ navigation }) => {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
+  const [image, setImage] = useState("");
 
-  const handleSubmit = () => {
-    if (title && category && description) {
-      Alert.alert("Berhasil", "Artikel berhasil ditambahkan (simulasi).");
-      navigation.goBack(); // kembali ke Home
+  const handleSubmit = async () => {
+    if (title && category && description && image) {
+      try {
+        await axios.post("https://681dff34c1c291fa6632938e.mockapi.io/api/articles", {
+          title,
+          category,
+          description,
+          image, 
+        });
+        Alert.alert("Berhasil", "Artikel berhasil ditambahkan.");
+        navigation.goBack();
+      } catch (error) {
+        Alert.alert("Gagal", "Gagal menambahkan artikel.");
+      }
     } else {
       Alert.alert("Gagal", "Mohon lengkapi semua field.");
     }
@@ -39,6 +51,13 @@ const FormScreen = ({ navigation }) => {
         onChangeText={setDescription}
         style={[styles.input, { height: 100 }]}
         multiline
+      />
+      <TextInput
+        placeholder="URL Gambar"
+        placeholderTextColor="#888"
+        value={image}
+        onChangeText={setImage}
+        style={styles.input}
       />
       <Button title="Tambah" onPress={handleSubmit} color="#4A90E2" />
     </View>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
+import * as Animatable from "react-native-animatable";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -16,6 +17,7 @@ import ListHorizontal from "./src/components/ListHorizontal";
 import YourBookmark from "./src/screens/bookmark";
 import ProfileData from "./src/screens/profile";
 import FormScreen from "./src/screens/form/FormScreen";
+import EditFormScreen from "./src/screens/form/EditFormScreen"; // Tambahkan import ini
 
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +25,8 @@ const MainScreen = ({ navigation }) => {
   const [selectedCategory, setSelectedCategory] = useState("Semua");
   const [screen, setScreen] = useState("Home");
   const [bookmarked, setBookmarked] = useState([]);
+
+  const fadeRef = useRef(null);
 
   const toggleBookmark = (item) => {
     if (bookmarked.find((x) => x.id === item.id)) {
@@ -38,7 +42,12 @@ const MainScreen = ({ navigation }) => {
       : articles.filter((article) => article.category === selectedCategory);
 
   const renderHome = () => (
-    <>
+    <Animatable.View
+      ref={fadeRef}
+      animation="fadeInUp"
+      duration={500}
+      style={{ flex: 1 }}
+    >
       <TextInput
         placeholder="Cari Artikel"
         style={styles.searchBar}
@@ -63,12 +72,20 @@ const MainScreen = ({ navigation }) => {
             item={item}
             bookmarked={bookmarked}
             toggleBookmark={toggleBookmark}
+            onEdit={(article) => navigation.navigate("EditForm", { article })} // Navigasi ke EditFormScreen
           />
         )}
         showsVerticalScrollIndicator={false}
       />
-    </>
+    </Animatable.View>
   );
+
+  const handleChangeScreen = (target) => {
+    fadeRef.current?.fadeOut(200).then(() => {
+      setScreen(target);
+      fadeRef.current?.fadeIn(300);
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -76,24 +93,43 @@ const MainScreen = ({ navigation }) => {
 
       {screen === "Home" && renderHome()}
       {screen === "Bookmark" && (
-        <YourBookmark bookmarked={bookmarked} toggleBookmark={toggleBookmark} />
+        <Animatable.View
+          ref={fadeRef}
+          animation="fadeInUp"
+          duration={500}
+          style={{ flex: 1 }}
+        >
+          <YourBookmark
+            bookmarked={bookmarked}
+            toggleBookmark={toggleBookmark}
+          />
+        </Animatable.View>
       )}
-      {screen === "Profile" && <ProfileData />}
+      {screen === "Profile" && (
+        <Animatable.View
+          ref={fadeRef}
+          animation="fadeInUp"
+          duration={500}
+          style={{ flex: 1 }}
+        >
+          <ProfileData />
+        </Animatable.View>
+      )}
 
       <View style={styles.menuBar}>
-        <TouchableOpacity onPress={() => setScreen("Home")}>
+        <TouchableOpacity onPress={() => handleChangeScreen("Home")}>
           <Text style={[styles.menuText, screen === "Home" && styles.active]}>
             Home
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setScreen("Bookmark")}>
+        <TouchableOpacity onPress={() => handleChangeScreen("Bookmark")}>
           <Text
             style={[styles.menuText, screen === "Bookmark" && styles.active]}
           >
             Bookmark
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setScreen("Profile")}>
+        <TouchableOpacity onPress={() => handleChangeScreen("Profile")}>
           <Text
             style={[styles.menuText, screen === "Profile" && styles.active]}
           >
@@ -118,6 +154,16 @@ const App = () => {
           name="Form"
           component={FormScreen}
           options={{ title: "Tambah Artikel" }}
+        />
+        <Stack.Screen
+          name="EditForm"
+          component={EditFormScreen} 
+          options={{ title: "Edit Artikel" }}
+        />
+        <Stack.Screen
+          name="Profile" 
+          component={ProfileData} 
+          options={{ title: "Profil Pengguna" }} 
         />
       </Stack.Navigator>
     </NavigationContainer>
