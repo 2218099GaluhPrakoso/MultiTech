@@ -17,7 +17,7 @@ import ListHorizontal from "./src/components/ListHorizontal";
 import YourBookmark from "./src/screens/bookmark";
 import ProfileData from "./src/screens/profile";
 import FormScreen from "./src/screens/form/FormScreen";
-import EditFormScreen from "./src/screens/form/EditFormScreen"; // Tambahkan import ini
+import EditFormScreen from "./src/screens/form/EditFormScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -72,7 +72,7 @@ const MainScreen = ({ navigation }) => {
             item={item}
             bookmarked={bookmarked}
             toggleBookmark={toggleBookmark}
-            onEdit={(article) => navigation.navigate("EditForm", { article })} // Navigasi ke EditFormScreen
+            onEdit={(article) => navigation.navigate("EditForm", { article })}
           />
         )}
         showsVerticalScrollIndicator={false}
@@ -99,10 +99,7 @@ const MainScreen = ({ navigation }) => {
           duration={500}
           style={{ flex: 1 }}
         >
-          <YourBookmark
-            bookmarked={bookmarked}
-            toggleBookmark={toggleBookmark}
-          />
+          <YourBookmark bookmarked={bookmarked} toggleBookmark={toggleBookmark} />
         </Animatable.View>
       )}
       {screen === "Profile" && (
@@ -123,16 +120,12 @@ const MainScreen = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => handleChangeScreen("Bookmark")}>
-          <Text
-            style={[styles.menuText, screen === "Bookmark" && styles.active]}
-          >
+          <Text style={[styles.menuText, screen === "Bookmark" && styles.active]}>
             Bookmark
           </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => handleChangeScreen("Profile")}>
-          <Text
-            style={[styles.menuText, screen === "Profile" && styles.active]}
-          >
+          <Text style={[styles.menuText, screen === "Profile" && styles.active]}>
             Profile
           </Text>
         </TouchableOpacity>
@@ -157,13 +150,13 @@ const App = () => {
         />
         <Stack.Screen
           name="EditForm"
-          component={EditFormScreen} 
+          component={EditFormScreen}
           options={{ title: "Edit Artikel" }}
         />
         <Stack.Screen
-          name="Profile" 
-          component={ProfileData} 
-          options={{ title: "Profil Pengguna" }} 
+          name="Profile"
+          component={ProfileData}
+          options={{ title: "Profil Pengguna" }}
         />
       </Stack.Navigator>
     </NavigationContainer>

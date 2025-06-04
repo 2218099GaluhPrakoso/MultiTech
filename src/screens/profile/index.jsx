@@ -1,19 +1,32 @@
 // src/screens/profile/index.jsx
 import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, StyleSheet, Alert } from "react-native";
-import ItemSmall from "../../components/ItemSmall"; // Komponen Item kecil untuk menampilkan artikel
-import axios from "axios";
-import { useNavigation } from '@react-navigation/native'; // Mengimpor useNavigation
+import ItemSmall from "../../components/ItemSmall";
+import { useNavigation } from "@react-navigation/native";
+
+
+import { db } from "../../firebase/firebaseConfig"; 
+import {
+  collection,
+  getDocs,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
 
 const ProfileData = () => {
-  const navigation = useNavigation(); // Mendapatkan objek navigation dengan hook
+  const navigation = useNavigation();
   const [articles, setArticles] = useState([]);
+
 
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await axios.get("https://681dff34c1c291fa6632938e.mockapi.io/api/articles");
-        setArticles(response.data);
+        const querySnapshot = await getDocs(collection(db, "articles"));
+        const data = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setArticles(data);
       } catch (error) {
         Alert.alert("Error", "Gagal mengambil data artikel.");
       }
@@ -22,19 +35,21 @@ const ProfileData = () => {
     fetchArticles();
   }, []);
 
-  // Fungsi untuk menghapus artikel
+
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://681dff34c1c291fa6632938e.mockapi.io/api/articles/${id}`);
-      setArticles((prevArticles) => prevArticles.filter((article) => article.id !== id));
+      await deleteDoc(doc(db, "articles", id));
+      setArticles((prevArticles) =>
+        prevArticles.filter((article) => article.id !== id)
+      );
     } catch (error) {
       Alert.alert("Error", "Gagal menghapus artikel.");
     }
   };
 
-  // Fungsi untuk mengarahkan ke EditFormScreen dengan membawa artikel yang akan diedit
+
   const handleEdit = (article) => {
-    navigation.navigate("EditForm", { article }); // Menggunakan navigation.navigate untuk mengarahkan ke EditFormScreen
+    navigation.navigate("EditForm", { article });
   };
 
   return (
@@ -48,12 +63,12 @@ const ProfileData = () => {
       <Text style={styles.bookmarkHeader}>Artikel yang Disimpan</Text>
       <FlatList
         data={articles}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <ItemSmall
             item={item}
             onDelete={handleDelete}
-            onEdit={handleEdit}  // Mengarahkan ke EditFormScreen untuk mengedit artikel
+            onEdit={handleEdit}
           />
         )}
         showsVerticalScrollIndicator={false}

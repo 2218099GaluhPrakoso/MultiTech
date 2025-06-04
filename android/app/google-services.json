@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "665432025464",
+    "project_id": "multitech-76495",
+    "storage_bucket": "multitech-76495.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:665432025464:android:d347cfdca6e353e83b408d",
+        "android_client_info": {
+          "package_name": "com.multitech"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpXcHffg3RjX4ochhM9BRSBNz2PU7mz9Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
-import axios from "axios";
+import { db } from "../../firebase/firebaseConfig";
+import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { displayNotification } from "../../utils/notification";
 
 const FormScreen = ({ navigation }) => {
   const [title, setTitle] = useState("");
@@ -11,16 +13,19 @@ const FormScreen = ({ navigation }) => {
   const handleSubmit = async () => {
     if (title && category && description && image) {
       try {
-        await axios.post("https://681dff34c1c291fa6632938e.mockapi.io/api/articles", {
+        await addDoc(collection(db, "articles"), {
           title,
           category,
           description,
-          image, 
+          image,
+          createdAt: Timestamp.now(),
         });
+        await displayNotification("Artikel Ditambahkan", `"${title}" berhasil disimpan.`);
         Alert.alert("Berhasil", "Artikel berhasil ditambahkan.");
         navigation.goBack();
       } catch (error) {
         Alert.alert("Gagal", "Gagal menambahkan artikel.");
+        console.log("Error adding document: ", error);
       }
     } else {
       Alert.alert("Gagal", "Mohon lengkapi semua field.");

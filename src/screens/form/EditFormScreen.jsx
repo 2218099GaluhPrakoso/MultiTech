@@ -1,9 +1,11 @@
+// src/screens/EditFormScreen.jsx
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from "react-native";
-import axios from "axios";
+import { View, Text, TextInput, Alert, TouchableOpacity, StyleSheet } from "react-native";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../../firebase/firebaseConfig";
 
 const EditFormScreen = ({ route, navigation }) => {
-  const { article } = route.params; // Mendapatkan data artikel dari route.params
+  const { article } = route.params;
   const [title, setTitle] = useState(article.title);
   const [category, setCategory] = useState(article.category);
   const [description, setDescription] = useState(article.description);
@@ -16,16 +18,18 @@ const EditFormScreen = ({ route, navigation }) => {
     }
 
     try {
-      await axios.put(`https://681dff34c1c291fa6632938e.mockapi.io/api/articles/${article.id}`, {
+      const articleRef = doc(db, "articles", article.id);
+      await updateDoc(articleRef, {
         title,
         category,
         description,
         image,
       });
-      Alert.alert("Berhasil", "Artikel berhasil diperbarui.");
-      navigation.goBack(); 
+      Alert.alert("Berhasil", "Artikel diperbarui.");
+      navigation.goBack();
     } catch (error) {
       Alert.alert("Gagal", "Gagal memperbarui artikel.");
+      console.log(error);
     }
   };
 
